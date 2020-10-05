@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -35,28 +34,23 @@ namespace CodeChallenge.Data
 
             // Set up the API URL
             string apiUrl = "http://api.stackexchange.com/2.2/search/advanced?"
-                + "page=1"                     // Hard-code to just one page
-                + $"&pagesize={numQuestions}"  // Set page size to number of questions (1 to 100)
-                + "&order=desc&sort=creation"  // Request the most recently created questions
-                + $"&accepted={isAccepted}"    // True to return only questions with accepted answers, False to return only those without one
-                + $"&answers={minAnswers}"     // Set the minimum number of answers returned questions must have
-                + "&site=stackoverflow";       // Lastly, set the site to Stack Overflow
+                + "page=1"                       // Hard-code to just one page
+                + $"&pagesize={numQuestions}"    // Set page size to number of questions (1 to 100)
+                + "&order=desc&sort=creation"    // Request the most recently created questions
+                + $"&accepted={isAccepted}"      // True to return only questions with accepted answers, False to return only those without one
+                + $"&answers={minAnswers}"       // Set the minimum number of answers returned questions must have
+                + "&site=stackoverflow"          // Set the site to Stack Overflow
+                + "&filter=!4(L6lo9D9N4OcoUIa";  // Filter generated from stackexchange to reduce the amount of question data in the response
 
             // Fire off the request
             string response = await MakeRequest(apiUrl);
 
-            // Parse the response into our model (see https://api.stackexchange.com/docs/advanced-search for structure)
+            // Parse the response into the model
             List<Question> result = new List<Question>();
             var questionData = JObject.Parse(response);
             foreach (var question in questionData["items"])
             {
-                int id = Int32.Parse(question["question_id"].ToString());
-                Question q = new Question(id, question["title"].ToString());
-
-                DateTimeOffset creationDate = DateTimeOffset.FromUnixTimeSeconds(Int32.Parse(question["creation_date"].ToString()));
-                q.CreationDateLocal = creationDate.LocalDateTime;
-
-                result.Add(q);
+                result.Add(new Question(question));
             }
 
             return result;
