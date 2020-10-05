@@ -1,8 +1,35 @@
-﻿@{
+﻿@model IEnumerable<CodeChallenge.Models.Question>
+
+@{
     ViewData["Title"] = "Question List";
     ViewData["Instructions"] = "Below are recent Stack Overflow questions that have multiple answers with at least one being accepted. Select a question to guess which answer is the accepted one.";
 }
 
-<div class="text-center">
-    <h1 class="display-4">TODO!</h1>
-</div>
+<h2>Question List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width:20%">
+                Creation Date
+            </th>
+            <th>
+                Title
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var question in Model)
+        {
+            <tr>
+                @* Putting the Id in as a tooltip since users don't need to care about it but it might be handy to know for this challenge *@
+                <td title=@Html.DisplayFor(q => question.Id)>  
+                    @Html.DisplayFor(q => question.CreationDateLocal)
+                </td>
+                <td>
+                    @Html.Raw(question.Title)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
