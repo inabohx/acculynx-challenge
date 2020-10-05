@@ -15,6 +15,8 @@ namespace CodeChallenge.Data
     /// </summary>
     public class DataService
     {
+        #region Public methods for Model data
+
         /// <summary>
         /// Data lookup method for getting a list of answered questions from Stack Overflow. These questions
         /// are hard-coded to be the most recent ones based on creation date (but still meeting the additional criteria).
@@ -56,6 +58,10 @@ namespace CodeChallenge.Data
             return result;
         }
 
+        #endregion
+
+        #region Private methods
+
         /// <summary>
         /// Wrapper around making an HTTP request for a given URL.
         /// 
@@ -77,5 +83,7 @@ namespace CodeChallenge.Data
 
             return response;
         }
+
+        #endregion
     }
 }

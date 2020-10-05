@@ -10,7 +10,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th style="width:20%">
+            <th class="dateColumn">
                 Creation Date
             </th>
             <th>
@@ -21,7 +21,7 @@
     <tbody>
         @foreach (var question in Model)
         {
-            <tr>
+            <tr class="question_row" onclick="location.href='@Url.Action("Question", "Home", new { id = question.Id })'">
                 @* Putting the Id in as a tooltip since users don't need to care about it but it might be handy to know for this challenge *@
                 <td title=@Html.DisplayFor(q => question.Id)>  
                     @Html.DisplayFor(q => question.CreationDateLocal)
