@@ -33,12 +33,17 @@ namespace CodeChallenge.Controllers
         }
 
         /// <summary>
-        /// Question-level view to show its answers
+        /// Question-level view to show its body and all answers
         /// </summary>
-        public async Task<IActionResult> Question()
+        public async Task<IActionResult> Question(int? id)
         {
-            // TODO: Lookup data
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            QuestionAndAnswers data = await _dataService.GetQuestionAndAnswers(id.Value);
+            return View(data);
         }
 
         /// <summary>

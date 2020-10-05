@@ -29,7 +29,7 @@ namespace CodeChallenge.Data
         /// <returns>A List of Question objects sorted by creation date - descending</returns>
         public async Task<List<Question>> GetAnsweredQuestions(int numQuestions, int minAnswers, bool isAccepted)
         {
-            // Parameter checks
+            // Parameter boundry checks
             minAnswers = Math.Max(1, minAnswers);        // Enforce a miniumum of 1 answer
             numQuestions = Math.Min(100, numQuestions);  // Enforce a max of 100 questions
             numQuestions = Math.Max(1, numQuestions);    // Enforce a minimum of 1 question
@@ -53,6 +53,39 @@ namespace CodeChallenge.Data
             foreach (var question in questionData["items"])
             {
                 result.Add(new Question(question));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Data lookup method for getting a question body and a list of its answers from Stack Overflow.
+        /// 
+        /// Note: If this is called enough in a narrow time window, it may fail to look up data. See https://api.stackexchange.com/docs/throttle for more info.
+        /// </summary>
+        /// <param name="id">The unique identifier of the question to lookup data for</param>
+        /// <returns>A QuestionAndAnswers model class for the view</returns>
+        public async Task<QuestionAndAnswers> GetQuestionAndAnswers(int id)
+        {
+            // Set up the API URL
+            string apiUrl = "http://api.stackexchange.com/2.2/questions/"   //  64215481 ?order=desc&sort=creation &site=stackoverflow&filter=!0W--8I9YKGezChPc18LqqIhtD
+                + $"{id.ToString()}/"                 // This supports multiple questions but we only care about our one
+                + "?order=desc&sort=creation"         // Sorting info (kind of unnecessary since there's only one question, but good to have)
+                + "&site=stackoverflow"               // Set the site to Stack Overflow
+                + "&filter=!L_(IB3u73lMJDwuiLsf3k1";  // Filter generated from stackexchange to reduce the amount of data in the response plus request the full bodies of the question and answers
+
+            // Fire off the request
+            string response = await MakeRequest(apiUrl);
+
+            // Parse the response into the model
+            QuestionAndAnswers result = new QuestionAndAnswers();
+            var allData = JObject.Parse(response);
+            var questionData = allData["items"][0];
+            
+            result.Question = new Question(questionData);
+            foreach(var answer in questionData["answers"])
+            {
+                result.Answers.Add(new Answer(answer));
             }
 
             return result;

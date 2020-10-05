@@ -25,8 +25,16 @@ namespace CodeChallenge.Models
             Id = Int32.Parse(question["question_id"].ToString());
             Title = question["title"].ToString();
 
-            DateTimeOffset creationDate = DateTimeOffset.FromUnixTimeSeconds(Int32.Parse(question["creation_date"].ToString()));
-            CreationDateLocal = creationDate.LocalDateTime;
+            if (question["creation_date"] != null)
+            {
+                DateTimeOffset creationDate = DateTimeOffset.FromUnixTimeSeconds(Int32.Parse(question["creation_date"].ToString()));
+                CreationDateLocal = creationDate.LocalDateTime;
+            }
+
+            if (question["body"] != null)
+            {
+                BodyHTML = question["body"].ToString();
+            }
         }
 
         #endregion
@@ -39,7 +47,7 @@ namespace CodeChallenge.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Title of the question that is ready for display (is already HTML encoded).
+        /// Title of the question that is ready for display (is already HTML encoded)
         /// </summary>
         public string Title { get; set; }
 
@@ -47,6 +55,11 @@ namespace CodeChallenge.Models
         /// Date and time of when the question was created (in local time zone)
         /// </summary>
         public DateTime CreationDateLocal { get; set; }
+
+        /// <summary>
+        /// The body of the question (is already HTML encoded)
+        /// </summary>
+        public string BodyHTML { get; set; }
 
         #endregion
     }
