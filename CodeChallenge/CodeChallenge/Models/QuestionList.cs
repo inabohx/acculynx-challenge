@@ -10,10 +10,16 @@ namespace CodeChallenge.Models
     /// </summary>
     public class QuestionList
     {
+        #region Constructors
+
         public QuestionList(List<Question> questions)
         {
             Questions = questions;
         }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// List of questions the user can click on
@@ -24,5 +30,7 @@ namespace CodeChallenge.Models
         /// Populate this when there is something that should be displayed after the view loads
         /// </summary>
         public string AlertMessage { get; set; }
+
+        #endregion
     }
 }

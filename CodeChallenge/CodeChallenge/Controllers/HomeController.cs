@@ -43,6 +43,7 @@ namespace CodeChallenge.Controllers
             }
 
             QuestionAndAnswers data = await _dataService.GetQuestionAndAnswers(id.Value);
+            data.ShuffleAnswers();  // Make sure the answers list is randomly ordered
             return View(data);
         }
 

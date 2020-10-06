@@ -31,7 +31,7 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
-            @if (ViewData["Instructions"]?.ToString() != string.Empty)
+            @if (!string.IsNullOrEmpty(ViewData["Instructions"]?.ToString()))
             {
                 <div>
                     <p><span class="boldLabel">Instructions:</span> @ViewData["Instructions"]</p>
