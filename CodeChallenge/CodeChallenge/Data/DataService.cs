@@ -68,7 +68,7 @@ namespace CodeChallenge.Data
         public async Task<QuestionAndAnswers> GetQuestionAndAnswers(int id)
         {
             // Set up the API URL
-            string apiUrl = "http://api.stackexchange.com/2.2/questions/"   //  64215481 ?order=desc&sort=creation &site=stackoverflow&filter=!0W--8I9YKGezChPc18LqqIhtD
+            string apiUrl = "http://api.stackexchange.com/2.2/questions/"
                 + $"{id.ToString()}/"                 // This supports multiple questions but we only care about our one
                 + "?order=desc&sort=creation"         // Sorting info (kind of unnecessary since there's only one question, but good to have)
                 + "&site=stackoverflow"               // Set the site to Stack Overflow
@@ -89,6 +89,32 @@ namespace CodeChallenge.Data
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Data lookup method to check an answer and see if it is the Accepted answer.
+        /// 
+        /// Note: If this is called enough in a narrow time window, it may fail to look up data. See https://api.stackexchange.com/docs/throttle for more info.
+        /// </summary>
+        /// <param name="id">The unique identifier of an answer</param>
+        /// <returns>True if the given answer is Accepted, False otherwise</returns>
+        public async Task<bool> CheckAcceptedAnswer(int id)
+        {
+            // Set up the API URL
+            string apiUrl = "http://api.stackexchange.com/2.2/answers/"
+                + $"{id.ToString()}/"          // This supports multiple answers but we only care about our one
+                + "?order=desc&sort=creation"  // Sorting info (kind of unnecessary since there's only one answer, but good to have)
+                + "&site=stackoverflow"        // Set the site to Stack Overflow
+                + "&filter=!-.EwD-0j1Bvq";     // Filter generated from stackexchange to reduce the amount of data in the response
+
+            // Fire off the request
+            string response = await MakeRequest(apiUrl);
+
+            // Parse the response into our answer
+            var allData = JObject.Parse(response);
+            var answerData = allData["items"][0];
+
+            return bool.Parse(answerData["is_accepted"].ToString());
         }
 
         #endregion

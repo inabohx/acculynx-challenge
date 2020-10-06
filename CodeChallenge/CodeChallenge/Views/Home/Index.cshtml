@@ -1,8 +1,18 @@
-﻿@model IEnumerable<CodeChallenge.Models.Question>
+﻿@model CodeChallenge.Models.QuestionList
 
 @{
     ViewData["Title"] = "Question List";
     ViewData["Instructions"] = "Below are recent Stack Overflow questions that have multiple answers with at least one being accepted. Select a question to guess which answer is the accepted one.";
+}
+
+@* Show a possible alert after the page displays *@
+@if (!string.IsNullOrEmpty(Model.AlertMessage))
+{
+    <script type="text/javascript">
+        window.onload = function () {  
+            alert("@Model.AlertMessage");
+        };
+    </script>
 }
 
 <h2>Question List</h2>
@@ -19,11 +29,11 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var question in Model)
+        @foreach (var question in Model.Questions)
         {
-            <tr class="question_row" onclick="location.href='@Url.Action("ViewAnswers", "Home", new { id = question.Id })'">
+            <tr class="question_row" onclick="location.href='@Url.Action("Question", "Home", new { id = question.Id })'">
                 @* Putting the Id in as a tooltip since users don't need to care about it but it might be handy to know for this challenge *@
-                <td title=@Html.DisplayFor(q => question.Id)>  
+                <td title=@Html.DisplayFor(q => question.Id)>
                     @Html.DisplayFor(q => question.CreationDateLocal)
                 </td>
                 <td>

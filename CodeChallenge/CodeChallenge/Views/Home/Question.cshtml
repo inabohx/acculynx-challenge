@@ -5,6 +5,8 @@
     ViewData["Instructions"] = "This is the full question and its answers (in a random order). Try and guess which one is the Accepted answer on Stack Overflow.";
 }
 
+@* Note: The question and answer bodyHTML properties contain text with full markup. They don't quite work perfectly though without more references to stackexchange web resources. *@
+
 <div class="card">
     <h4 class="card-header">Question: <span class="removeWeight">@Html.Raw(Model.Question.Title)</span></h4>
     <div class="card-body">
@@ -20,13 +22,16 @@
     var answer = Model.Answers[i];
     var count = i + 1;
 
-    <div class="card">
-        <h4 class="card-header">Answer @count</h4>
+    <div class="card answerCard">
+        @* Putting the Id in as a tooltip since users don't need to care about it but it might be handy to know for this challenge *@
+        <h4 class="card-header" title=@Html.DisplayFor(a => answer.Id)>Answer @count</h4>
         <div class="card-body">
             @Html.Raw(answer.BodyHTML)
+            <div class="text-right">
+                <a asp-action="AnswerGuess" asp-route-id="@answer.Id" class="btn btn-primary">This one!</a>
+            </div>
         </div>
     </div>
     <br />
     <br />
 }
-
