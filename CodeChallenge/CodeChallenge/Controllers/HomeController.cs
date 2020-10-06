@@ -2,6 +2,7 @@
 using CodeChallenge.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -27,9 +28,18 @@ namespace CodeChallenge.Controllers
         /// </summary>
         public async Task<IActionResult> Index()
         {
-            List<Question> questionData = await _dataService.GetAnsweredQuestions(15, 2, true);
-
-            return View(new QuestionList(questionData));
+            try
+            {
+                List<Question> questionData = await _dataService.GetAnsweredQuestions(15, 2, true);
+                return View(new QuestionList(questionData));
+            }
+            catch (Exception e)
+            {
+                // Most likely an HttpRequestException related to the stackexchange quota
+                var emptyData = new QuestionList(new List<Question>());
+                emptyData.AlertMessage = $"ERROR!\\n\\nSource: {e.Source}\\nMessage: {e.Message}\\n\\nNote: Any Http problems in this challenge has a high likelihood of being caused by hitting the stackexchange API quota.";
+                return View(emptyData);
+            }
         }
 
         /// <summary>
